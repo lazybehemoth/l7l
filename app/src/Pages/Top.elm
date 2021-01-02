@@ -766,7 +766,7 @@ tokenBlock model =
             ]
         ]
     , textColumn [ centerX, width <| px <| responsive model.layout 375 750 ]
-        [ paragraph ([ paddingEach { edges | top = 35, bottom = 20 } ] ++ hStyles)
+        [ paragraph ([ paddingEach { edges | left = 10, right = 10, top = 35, bottom = 20 } ] ++ hStyles)
             [ text "To learn more about LE7EL, our products, DAO, planned token sale and more"
             ]
         , paragraph ([ centerX, padding 10 ] ++ pStyles)
@@ -935,7 +935,7 @@ resultsHistory model =
 
 betSelection : Model -> Element Msg
 betSelection model =
-    column [ width fill, paddingXY 20 15 ]
+    column [ width fill, paddingXY 20 5 ]
         [ row [ width fill ]
             [ column [ centerX ]
                 [ Input.radio
@@ -1064,7 +1064,7 @@ totalBets bets =
 
 estimateRewards : Model -> Element Msg
 estimateRewards model =
-    el [ centerX, paddingXY 0 15 ] <|
+    el [ centerX, paddingXY 0 10 ] <|
         column []
             [ row [ centerX ]
                 [ el [ Font.variant Font.smallCaps, Font.color Config.grayColor ] <|
