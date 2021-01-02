@@ -68,10 +68,8 @@ Configure Ganache according to provided `truffle-config.js` (by default, we run 
 npm install
 npm migrate:dev
 
-cd app
-npm install
-npm run dev
-npm run dev:webpack
+cd app 
+npm start
 ```
 
 # Testing

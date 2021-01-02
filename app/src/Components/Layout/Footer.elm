@@ -34,6 +34,9 @@ view layout =
                     { url = "https://docs.le7el.com"
                     , label = text "Docs"
                     }
-                , el [ centerX ] <| text "Github"
+                , link [ centerX ]
+                    { url = "https://github.com/le7el/l7l.git"
+                    , label = text "Github"
+                    }
                 ]
             ]

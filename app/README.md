@@ -3,11 +3,10 @@
 
 ## Local development
 
-You can get this site up and running with those two commands:
+You can get this site up and running with the following command:
 
 ```
-npm run dev
-npm run dev:webpack
+npm start
 ```
 
 ### Other commands to know
