@@ -1,0 +1,13 @@
+migrations/8_update_lottery.jsd
+node_modules
+build
+.vscode
+.DS_Store
+.secret
+.secret*
+public/dist
+logs/*
+RINKEBY.md
+l7l.code-workspace
+deb.js
+results.js

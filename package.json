@@ -1,0 +1,43 @@
+{
+  "name": "le7el",
+  "description": "Simple lottery with 50% chance to ~double your stake, with rewards in own token",
+  "version": "1.0.0",
+  "keywords": [],
+  "author": "L7L DAO",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ashleygwilliams/my_package/issues"
+  },
+  "homepage": "https://le7el.com",
+  "scripts": {
+    "solhint": "solhint ./contracts/**/*.sol",
+    "lint": "npm run solhint",
+    "test": "NODE_ENV=test truffle test --stacktrace-extra --network develop",
+    "migrate:dev": "truffle migrate --reset --network develop",
+    "migrate:rinkeby": "truffle migrate --network live_rinkeby",
+    "migrate:live": "truffle migrate --network live",
+    "verify:alarm": "truffle run verify ResolutionAlarmChainlink --network live_rinkeby",
+    "verify:treasury": "truffle run verify Treasury --network live_rinkeby --license MIT",
+    "verify:randomness": "truffle run verify Randomness --network live_rinkeby  --license MIT",
+    "verify:lottery": "truffle run verify LotteryDoubleEth --network live_rinkeby --license MIT",
+    "verify:history": "truffle run verify LotteryDoubleEthHistory --network live_rinkeby --license MIT",
+    "verify:booty": "truffle run verify Booty@0x85D2Fdd6eDF316Bcd69F837BdBe14362d9dD8aa1 --debug --network live_rinkeby --license MIT"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "0.0.10",
+    "@openzeppelin/contracts": "^3.2.0",
+    "@truffle/hdwallet-provider": "^1.1.0"
+  },
+  "devDependencies": {
+    "@chainlink/test-helpers": "0.0.5",
+    "@openzeppelin/test-helpers": "^0.5.6",
+    "chai": "^4.2.0",
+    "eth-gas-reporter": "^0.2.18",
+    "solc": "^0.6.12",
+    "solhint": "^2.1.0",
+    "truffle": "^5.1.47",
+    "truffle-assertions": "^0.9.2",
+    "truffle-contract-size": "^2.0.0",
+    "truffle-plugin-verify": "^0.5.4"
+  }
+}
