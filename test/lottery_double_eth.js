@@ -281,4 +281,26 @@ contract('LotteryDoubleEth', accounts => {
     const leftToClaim2 = await booty.unlockedBalanceOf(accounts[6]);
     assert.equal(leftToClaim2.toString(), ether('0.1485'), 'should be 0.1485');
   });
+
+  it('should gracefully handle treasury withdrawal failures', async () => {
+    const instance = await Lottery.deployed();
+    const randomness = await Randomness.deployed();
+
+    // Cleanup for previous wins (just in case);
+    await instance.claimBooty.sendTransaction({ from: accounts[5]});
+
+    await instance.sendTransaction({ from: accounts[6], value: higherBet });
+    await instance.betBlue.sendTransaction(ZERO_ADDR, { from: accounts[5], value: higherBet });
+    const balance1 = await web3.eth.getBalance(accounts[5]).then(amount => web3.utils.toBN(amount));
+    await instance.claimBooty.sendTransaction({ from: accounts[5]});
+    const balance2 = await web3.eth.getBalance(accounts[5]).then(amount => web3.utils.toBN(amount));
+    assert.equal(balance2.sub(balance1).lt(web3.utils.toBN(1)), true, 'should be the same or a bit less because of gas expenses');
+    
+    await instance.results.sendTransaction({ from: accounts[0] });
+    const seed = await instance.lastSeed();
+    await randomness.rawFulfillRandomness.sendTransaction(seed, 10, { from: accounts[4] });
+    await instance.claimBooty.sendTransaction({ from: accounts[5]});
+    const balance3 = await web3.eth.getBalance(accounts[5]).then(amount => web3.utils.toBN(amount));
+    assert.equal(balance3.gt(balance2), true, 'should be greater');
+  });
 });

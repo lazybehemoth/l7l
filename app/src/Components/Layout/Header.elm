@@ -249,7 +249,7 @@ mobileMenuHeight hiddenMenus =
 
         aboutMenuHeight =
             if not hiddenMenus.about then
-                productsMenuHeight + 280
+                productsMenuHeight + 200
 
             else
                 productsMenuHeight
@@ -355,21 +355,6 @@ aboutLinks newTab =
         []
         { url = "https://docs.le7el.com/about/where-to-get-l7l"
         , label = text "Where to buy L7L"
-        }
-    , newTabLinkIf newTab
-        []
-        { url = "https://docs.le7el.com/about/technical-papers"
-        , label = text "Technical papers"
-        }
-    , newTabLinkIf newTab
-        []
-        { url = "https://docs.le7el.com/about/guide-1"
-        , label = text "Guides"
-        }
-    , newTabLinkIf newTab
-        []
-        { url = "https://docs.le7el.com/about/faq"
-        , label = text "FAQ"
         }
     ]
 

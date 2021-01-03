@@ -5,6 +5,7 @@ import Element exposing (..)
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
+import Element.Background as Background
 import Element.Region as Region
 import Html
 import Html.Attributes
@@ -103,7 +104,7 @@ view : Model -> Document Msg
 view model =
     { title = "Earning L7L"
     , body =
-        [ column [ centerX, Font.size 16, paddingXY 0 20, width fill, spacingXY 0 <| responsive model.layout 0 20 ]
+        [ column [ centerX, Font.size 16, paddingXY 0 <| responsiveAdv model.layout 10 20, width fill ]
             [ paragraph
                 [ responsiveColumn model.layout
                 , centerX
@@ -111,7 +112,7 @@ view model =
                 , Font.center
                 , Font.bold
                 , Font.size <| responsive model.layout 24 28
-                , paddingXY 20 0
+                , paddingXY 20 20
                 , hidden <| model.layout.class == Phone || model.layout.class == Tablet || model.layout.orientation == Portrait
                 ]
                 [ el [ alignLeft, pointer, onClick <| ChangeUrl "/" ] (text "❮")
@@ -123,36 +124,52 @@ view model =
                 , Font.center
                 , paddingEach { top = responsiveAdv model.layout 0 30, bottom = 30, right = 20, left = 20 }
                 ]
-                [ text "You can earn L7L token two ways: by betting yourself or making others bet through your unique referral link tied to your wallet address" ]
-            , paragraph [ responsiveColumn model.layout, centerX, paddingXY 50 0 ]
-                [ text "→ All betters earn "
+                [ text "You can earn "
                 , el [ Font.bold ] <| text "L7L"
-                , text " when they bet, regardless if they win or lose"
+                , text " token two ways: by betting yourself or making others bet through your unique referral link tied to your wallet address"
                 ]
-            , paragraph [ responsiveColumn model.layout, centerX, paddingXY 50 0 ]
-                [ text "→ You earn "
-                , el [ Font.bold ] <| text "1 L7L"
-                , text " for each "
-                , el [ Font.bold ] <| text "0.1 ETH"
-                , text " bet made by everyone using your link ("
-                , el [ Font.bold ] <| text "10 ETH"
-                , text " in total bets = "
-                , el [ Font.bold ] <| text "100 L7L"
-                , text ")"
+            , column
+                [ Background.color Config.blackColor
+                , Font.color Config.whiteColor
+                , centerX
+                , padding 30
+                , responsiveColumn model.layout
                 ]
-            , paragraph [ responsiveColumn model.layout, centerX, paddingXY 50 0 ]
-                [ text "→ The ones your refer earn extra "
-                , el [ Font.bold ] <| text "1 L7L"
-                , text " for each "
-                , el [ Font.bold ] <| text "0.1 ETH"
-                , text " bet they make on top of their existing L7L rewards"
+                [ column [ centerX, spacing 20 ]
+                    [ paragraph []
+                        [ text "→ When you bet you earn "
+                        , el [ Font.bold ] <| text "14 L7L"
+                        , text " per "
+                        , el [ Font.bold ] <| text "0.1 ETH"
+                        , text " bet regardless if they win or lose"
+                        ]
+                    , paragraph []
+                        [ text "→ Additionally, you earn "
+                        , el [ Font.bold ] <| text "1 L7L"
+                        , text " for each "
+                        , el [ Font.bold ] <| text "0.1 ETH"
+                        , text " bet made by everyone using your link"
+                        ]
+                    , paragraph []
+                        [ text "→ The ones your refer earn themselves an extra "
+                        , el [ Font.bold ] <| text "1 L7L"
+                        , text " for each "
+                        , el [ Font.bold ] <| text "0.1 ETH"
+                        , text " bet they make"
+                        ]
+                    ]
                 ]
             , paragraph [ responsiveColumn model.layout, centerX, Font.center, paddingXY 20 30 ]
                 [ text <|
                     String.concat
                         [ "This means that this is double incentive program - a win/win for both you and the ones you refer. "
-                        , "If you make many people use your link to bet, you could truly earn lots of L7L at a super early-stage."
+                        , "If you make many people use your link to bet, you could truly earn lots of "
                         ]
+                , el [ Font.bold ] <| text "L7L"
+                , text " at a super early-stage."
+                ]
+            , paragraph [ responsiveColumn model.layout, centerX, Font.center, Font.bold, paddingXY 20 10 ]
+                [ text "Your unique referral link:"
                 ]
             , refLinkInput model
             , paragraph [ responsiveColumn model.layout, centerX, Font.center, Font.italic, paddingXY 20 30 ]

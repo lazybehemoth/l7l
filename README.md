@@ -1,4 +1,4 @@
-# ![Le7el DAO](app/public/logo.png)
+# ![LE7EL DAO](app/public/logo.png)
 
 ### [Rinkeby](https://rinkeby.le7el.com/)&nbsp;&nbsp;&nbsp;&nbsp;[Mainnet](https://le7el.com)
 
@@ -37,7 +37,7 @@ Uses [elm ports](https://guide.elm-lang.org/interop/ports.html) for web3 interac
 
 [Index db storage](https://dexie.org) is used to cache historical bet results to reduce load on public Ethereum nodes.
 
-It was developed to be hosted on [IPSF](https://ipfs.io/).
+It was developed to be hosted on [IPFS](https://ipfs.io/).
 
 Check out the [the source code](./app/src) for more details.
 

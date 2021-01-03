@@ -121,6 +121,13 @@ contract LotteryDoubleEth is GasTokenUser {
         return address(TrustedBooties[currentRound]);
     }
 
+    /**
+     * @dev Checks if game is ready for resolution by 3rd party alarm resolvers.
+     */
+    function canResolve() public view returns (bool) {
+        return now > endsAfter;
+    }
+
     /** 
      * @dev Requests Chainlink randomness.
      *
@@ -164,8 +171,8 @@ contract LotteryDoubleEth is GasTokenUser {
             uint256 amBlue;
             address mmGreen;
             uint256 amGreen;
-            (mmBlue, amBlue, mmGreen, amGreen) = TrustedBooty.recycleForRound(currentRound);
             uint32 _newRound = _currentRound + 1;
+            (mmBlue, amBlue, mmGreen, amGreen) = TrustedBooty.recycleForRound(_newRound);
 
             if (mmBlue != ZERO_ADDRESS) _TrustedHistory.newBet(_newRound, 0, mmBlue, amBlue, ZERO_ADDRESS);
             if (mmGreen != ZERO_ADDRESS) _TrustedHistory.newBet(_newRound, 1, mmGreen, amGreen, ZERO_ADDRESS);

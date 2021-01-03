@@ -133,13 +133,11 @@ contract Treasury {
         BootyInterface[] storage booties = TrustedBooties[destAddr]; 
 
         uint256 i = booties.length;
+        bool cleanupAllowed = true;
         require(i > 0, "nothing to withdraw");
-        uint256 j = i;
 
         while (i > 0 && gasleft() > 70000) {
-            j--;
-
-            BootyInterface booty = booties[j];
+            BootyInterface booty = booties[i - 1];
             address bootyAddr = address(booty);
 
             // solhint-disable-next-line avoid-low-level-calls
@@ -149,8 +147,10 @@ contract Treasury {
             }
 
             bytes32 hashedError = keccak256(error);
-            if (success || hashedError == NO_SHARES || hashedError == NO_PAYMENT) {
+            if (cleanupAllowed && (success || hashedError == NO_SHARES || hashedError == NO_PAYMENT)) {
                 booties.pop();
+            } else {
+                cleanupAllowed = false;
             }
 
             i--;

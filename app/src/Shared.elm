@@ -234,21 +234,28 @@ update msg model =
                 ( { model | claimEthState = FailedClaim }, Cmd.none )
 
         ShowTooltip option state ->
+            let
+                hideWithDelay =
+                    if state then
+                        Cmd.none
+                    else
+                        Process.sleep 1000 |> Task.perform (always <| ShowTooltip option True)
+            in
             case option of
                 "claimNotice" ->
-                    ( { model | shownTooltips = { defaultTooltips | claimNotice = state } }, Cmd.none )
+                    ( { model | shownTooltips = { defaultTooltips | claimNotice = state } }, hideWithDelay )
 
                 "random5x" ->
-                    ( { model | shownTooltips = { defaultTooltips | random5x = state } }, Cmd.none )
+                    ( { model | shownTooltips = { defaultTooltips | random5x = state } }, hideWithDelay )
 
                 "random10x" ->
-                    ( { model | shownTooltips = { defaultTooltips | random10x = state } }, Cmd.none )
+                    ( { model | shownTooltips = { defaultTooltips | random10x = state } }, hideWithDelay )
 
                 "random100x" ->
-                    ( { model | shownTooltips = { defaultTooltips | random100x = state } }, Cmd.none )
+                    ( { model | shownTooltips = { defaultTooltips | random100x = state } }, hideWithDelay )
 
                 "random1000x" ->
-                    ( { model | shownTooltips = { defaultTooltips | random1000x = state } }, Cmd.none )
+                    ( { model | shownTooltips = { defaultTooltips | random1000x = state } }, hideWithDelay )
 
                 _ ->
                     ( model, Cmd.none )

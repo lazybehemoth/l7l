@@ -21,7 +21,7 @@
     "verify:randomness": "truffle run verify Randomness --network live_rinkeby  --license MIT",
     "verify:lottery": "truffle run verify LotteryDoubleEth --network live_rinkeby --license MIT",
     "verify:history": "truffle run verify LotteryDoubleEthHistory --network live_rinkeby --license MIT",
-    "verify:booty": "truffle run verify Booty@0x85D2Fdd6eDF316Bcd69F837BdBe14362d9dD8aa1 --debug --network live_rinkeby --license MIT"
+    "verify:booty": "truffle run verify Booty@0x4bfb1134f3748571d15b1031cb43b7a9ea05c3be --debug --network live_rinkeby --license MIT"
   },
   "dependencies": {
     "@chainlink/contracts": "0.0.10",

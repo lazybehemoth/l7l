@@ -594,7 +594,7 @@ introBlock model =
 
 betsWarning : Model -> List (Element Msg)
 betsWarning model =
-    [ el [ width fill, paddingXY 0 20 ] <|
+    [ el [ width fill, paddingXY 0 <| if model.walletAddress == Nothing then 0 else 20 ] <|
         column [ width fill, Background.color Config.grayColor ]
             [ textColumn
                 [ Font.color Config.whiteColor
