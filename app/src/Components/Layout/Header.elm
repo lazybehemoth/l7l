@@ -31,6 +31,7 @@ view :
     { dummyAction : msg
     , title : String
     , iLink : List (Attribute msg) -> String -> Element msg -> Element msg
+    , unsupportedNetwork : Bool
     , layout : Device
     , activeProduct : ProductType
     , onWalletConnect : msg
@@ -49,8 +50,6 @@ view :
     , mobileMenuHidden : Animator.Timeline Bool
     , shownTooltips : ShownTooltips
     , hiddenMenus : HiddenMenus
-    , closedEarnL7lModal : Bool
-    , closeEarnL7L : msg
     }
     -> Element msg
 view options =
@@ -123,7 +122,7 @@ view options =
                 [ none
                 ]
             , if options.activeProduct /= None then
-                earnL7LLead options.iLink options.closeEarnL7L options.closedEarnL7lModal
+                earnL7LLead options.iLink
 
               else
                 none
@@ -462,13 +461,13 @@ leverageSelector layout activeLeverage shownTooltips onTooltipToggle noAction =
                 , pointer
                 , paddingEach { edges | top = 10, right = 15, left = 15 }
                 , onMouseEnter <|
-                    if layout.class == Phone then
+                    if layout.class == Phone || layout.class == Tablet then
                         noAction
 
                     else
                         onTooltipToggle (String.concat [ "random", String.fromInt leverage, "x" ]) False
                 , onMouseLeave <|
-                    if layout.class == Phone then
+                    if layout.class == Phone || layout.class == Tablet then
                         noAction
 
                     else
@@ -510,8 +509,8 @@ leverageSelector layout activeLeverage shownTooltips onTooltipToggle noAction =
         List.map renderOption [ 2, 5, 10, 100, 1000 ]
 
 
-earnL7LLead : (List (Attribute msg) -> String -> Element msg -> Element msg) -> msg -> Bool -> Element msg
-earnL7LLead iLink closeEarnL7L closedEarnL7lModal =
+earnL7LLead : (List (Attribute msg) -> String -> Element msg -> Element msg) -> Element msg
+earnL7LLead iLink =
     row 
         [ width fill
         , centerX

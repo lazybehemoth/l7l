@@ -77,10 +77,15 @@ const contractPromise = (contractName, appNetworkId) => {
             }))*/
 
         case 'currentBooty':
-            return contract('lottery', appNetworkId).currentBooty()
-                .then(bootyAddr => {
-                    return Promise.resolve(new ethers.Contract(bootyAddr, bootyArtifact.abi, ethersProvider()))
-                })
+            const lottery = contract('lottery', appNetworkId)
+            if (!lottery) {
+                return Promise.reject('no lottery contract in this network')
+            } else {
+                return lottery.currentBooty()
+                    .then(bootyAddr => {
+                        return Promise.resolve(new ethers.Contract(bootyAddr, bootyArtifact.abi, ethersProvider()))
+                    })
+            }
 
         case 'booty':
             return Promise.resolve(new ethers.Contract(arg1, bootyArtifact.abi, ethersProvider()))

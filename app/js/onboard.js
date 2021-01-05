@@ -29,6 +29,16 @@ const initAddressPorts = debounce((app, contracts, appNetworkId, address) => {
   getHistoryPort(app, appNetworkId, contracts)
 }, 1000, false)
 
+const resetWallet = (app, network) => {
+  if (window.ONBOARD && network != 1337) {
+    app.ports.walletConnected.send('')
+    app.ports.updateEthWalletBalance.send('0')
+    app.ports.updateEthBalanceForClaim.send('0')
+    app.ports.updateL7lBalanceForClaim.send('0')
+    window.ONBOARD.walletCheck()
+  }
+}
+
 const initOnboard = (app, contracts) => {
   return Onboard({
     dappId: '91e4a4d4-e476-4f4c-92c1-313e7e834daa',       // [String] The API key created by step one above
@@ -46,10 +56,28 @@ const initOnboard = (app, contracts) => {
         }
       },
       network: network => {
+        console.log("NETWORK", network)
+        
         if (!network) {
           window.localStorage.removeItem('selectedNetwork')
         } else if (network != 1 && network != 4 && network !== 5777) {
           console.error("Unsupported network", network)
+          resetWallet(app, network)
+        // Automatically redirect user to a supported network site if needed
+        } else if (network == 1 && document.location.hostname === 'rinkeby.le7el.com') {
+          document.location.href = 'https://le7el.com'
+          return
+        } else if (network == 4 && document.location.hostname === 'le7el.com') {
+          document.location.href = 'https://rinkeby.le7el.com'
+          return
+        } else if (!contracts.contract('lottery', network)) {
+          console.error("Smart contracts are not deployed to network", network, "yet")
+          resetWallet(app, network)
+        // Web3 provider considers it's unsafe to change the network without page reload
+        } else if (window.localStorage.getItem('selectedNetwork') != network) {
+          window.localStorage.setItem('selectedNetwork', network)
+          document.location.reload()
+          return
         } else {
           window.localStorage.setItem('selectedNetwork', network)
 
@@ -60,12 +88,15 @@ const initOnboard = (app, contracts) => {
         }
       },
       address: address => {
+        const network = currentNetwork()
         if (!address) {
           window.localStorage.removeItem('selectedAddress')
-        }
-        else {
+        } else if (!contracts.contract('lottery', network)) {
+          console.error("Smart contracts are not deployed to network", network, "yet")
+          resetWallet(app, network)
+        } else {
           window.localStorage.setItem('selectedAddress', address)
-          initAddressPorts(app, contracts, currentNetwork(), address)
+          initAddressPorts(app, contracts, network, address)
         }
       }
     },

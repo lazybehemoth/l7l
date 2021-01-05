@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MPL-2.0
 
 pragma solidity >=0.6.0;
 
@@ -16,12 +16,9 @@ contract L7lToken is ERC777 {
      * @dev Distribution of initial supply.
      *
      * Of total supply of 100m L7L:
-     * 20% goes to LE7EL developers
-     * 10% is reserved for future IDO (managed by DAO)
-     * 70% is reserved for rewards to Casino players (managed by DAO)
-     *
-     * for security reasons L7L reward pool will be kept in DAO vault
-     * top up is planned with 1m L7L batches
+     * 30% goes to LE7EL developers
+     * 20% is reserved for future IDOs (held by DAO)
+     * 50% is reserved for rewards to players (held by DAO)
      *
      * @param _governance Governance contract address.
      * @param defaultOperators Contract addresses which can freely interact with L7L tokens.
@@ -31,7 +28,7 @@ contract L7lToken is ERC777 {
         address beneficiaryAddress = TrustedGovernance.beneficiary();
         address managerAddress = TrustedGovernance.manager();
 
-        _mint(managerAddress, 20000000 * 10 ** 18, "", "");
+        _mint(managerAddress, 30000000 * 10 ** 18, "", "");
         _mint(beneficiaryAddress, 80000000 * 10 ** 18, "", "");
     }
 }

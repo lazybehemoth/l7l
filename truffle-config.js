@@ -23,6 +23,7 @@ const HDWalletProvider = require("@truffle/hdwallet-provider")
 //
 const fs = require('fs');
 const mnemonic = fs.readFileSync(".secret").toString().trim();
+const deployKey = fs.readFileSync(".secret.mainnet").toString().trim();
 
 module.exports = {
   /**
@@ -66,6 +67,20 @@ module.exports = {
       network_id: 4,       // Rinkeby's id
       from: '0xeEdcC6F843B5E78ce9873Ff1eF282ed8b8a142C6',
       gasPrice: 20000000000,  // 20 gwei (in wei) (default: 100 gwei)
+      //gas: 5500000,        // Ropsten has a lower block limit than mainnet
+      confirmations: 0,    // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+      skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    },
+
+    live_mainnet: {
+      provider: () => new HDWalletProvider({ 
+        privateKeys: [deployKey],
+        providerOrUrl: 'https://mainnet.infura.io/v3/296c495e5dbc4f95ad4bbf1e4ea0de5e' // public Infura
+      }),
+      network_id: 1,       // Mainnet's id
+      from: '0xA00A92cf63e5675191D33093F0cf8C0Fc4d337e9',
+      gasPrice: 60000000000,  // 60 gwei (in wei) (default: 100 gwei)
       //gas: 5500000,        // Ropsten has a lower block limit than mainnet
       confirmations: 0,    // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)

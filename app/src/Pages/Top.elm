@@ -779,7 +779,7 @@ tokenBlock model =
         , paragraph ([ centerX, padding 10 ] ++ pStyles)
             [ el [ Font.color Config.highlightColor ] <| text "→ "
             , link [ centerX, width <| px 300, Font.alignLeft, Font.underline ]
-                { url = "https://discord.gg/ucvmxdfM"
+                { url = "https://discord.gg/GNevtWkqCw"
                 , label = text "Ask questions in our Discord"
                 }
             ]

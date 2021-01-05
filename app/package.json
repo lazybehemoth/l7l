@@ -1,7 +1,7 @@
 {
-  "name": "l7l-dapp",
+  "name": "le7el-dapp",
   "version": "1.0.0",
-  "description": "Chainlink casino dapp",
+  "description": "Frontend for LE7EL.com dapp",
   "private": true,
   "scripts": {
     "start": "npm install && npm run build:dev && npm run dev",

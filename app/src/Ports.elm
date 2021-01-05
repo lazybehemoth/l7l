@@ -6,7 +6,6 @@ port module Ports exposing
     , changeWallet
     , claimEth
     , claimEthState
-    , closeEarnL7L
     , connectWallet
     , currentRound
     , externalUrl
@@ -111,6 +110,3 @@ port notifyResult : (Json.Encode.Value -> msg) -> Sub msg
 
 
 port resultAcknowledged : Int -> Cmd msg
-
-
-port closeEarnL7L : String -> Cmd msg

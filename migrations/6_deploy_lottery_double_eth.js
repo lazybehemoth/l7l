@@ -4,7 +4,7 @@ const Governance = artifacts.require("Governance")
 const Treasury = artifacts.require("Treasury")
 const Randomness = artifacts.require("Randomness")
 const RandomnessMock = artifacts.require("RandomnessMock")
-const ResolutionAlarmChainlink = artifacts.require("ResolutionAlarmChainlink")
+//const ResolutionAlarmChainlink = artifacts.require("ResolutionAlarmChainlink")
 const ResolutionAlarmCron = artifacts.require("ResolutionAlarmCron")
 
 module.exports = async (deployer, network) => {
@@ -13,7 +13,8 @@ module.exports = async (deployer, network) => {
   let resolutionAlarmContract, randomnessContract;
 
   randomnessContract = network.startsWith('live') ? await Randomness.deployed() : await RandomnessMock.deployed()
-  resolutionAlarmContract = network == 'live_rinkeby' ? await ResolutionAlarmChainlink.deployed() : await ResolutionAlarmCron.deployed()
+  //resolutionAlarmContract = network == 'live_rinkeby' ? await ResolutionAlarmChainlink.deployed() : await ResolutionAlarmCron.deployed()
+  resolutionAlarmContract = await ResolutionAlarmCron.deployed()
 
   try {
     historyContract = await deployer.deploy(LotteryDoubleEthHistory, governanceContract.address)

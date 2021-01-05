@@ -45,7 +45,6 @@ type alias Flags =
     , x2eth_history_address : String
     , inner_width : Int
     , inner_height : Int
-    , closed_earn_l7l_modal : Bool
     }
 
 
@@ -62,7 +61,6 @@ type alias Model =
     , key : Maybe Key
     , innerWidth : Int
     , innerHeight : Int
-    , closedEarnL7lModal : Bool
     , x2ethAddress : String
     , x2ethHistoryAddress : String
     , walletAddress : Maybe String
@@ -107,7 +105,6 @@ init flags url =
         Nothing
         flags.inner_width
         flags.inner_height
-        flags.closed_earn_l7l_modal
         flags.x2eth_address
         flags.x2eth_history_address
         Nothing
@@ -146,7 +143,6 @@ type Msg
     | OpenedMobileMenu
     | ShowTooltip String Bool
     | ToggleMenu String Bool
-    | CloseEarnL7L
 
 
 animator : Animator.Animator Model
@@ -236,26 +232,35 @@ update msg model =
         ShowTooltip option state ->
             let
                 hideWithDelay =
-                    if state then
+                    if state || model.innerWidth > 1200 then
                         Cmd.none
                     else
                         Process.sleep 1000 |> Task.perform (always <| ShowTooltip option True)
+
+                hideClaimWithDelay =
+                    if state && model.innerWidth < 1201 then
+                        Process.sleep 2500 |> Task.perform (always <| ShowTooltip option False)
+                    else
+                        Cmd.none
+
+                shownTooltips =
+                    model.shownTooltips
             in
             case option of
                 "claimNotice" ->
-                    ( { model | shownTooltips = { defaultTooltips | claimNotice = state } }, hideWithDelay )
+                    ( { model | shownTooltips = { shownTooltips | claimNotice = state } }, hideClaimWithDelay )
 
                 "random5x" ->
-                    ( { model | shownTooltips = { defaultTooltips | random5x = state } }, hideWithDelay )
+                    ( { model | shownTooltips = { shownTooltips | random5x = state } }, hideWithDelay )
 
                 "random10x" ->
-                    ( { model | shownTooltips = { defaultTooltips | random10x = state } }, hideWithDelay )
+                    ( { model | shownTooltips = { shownTooltips | random10x = state } }, hideWithDelay )
 
                 "random100x" ->
-                    ( { model | shownTooltips = { defaultTooltips | random100x = state } }, hideWithDelay )
+                    ( { model | shownTooltips = { shownTooltips | random100x = state } }, hideWithDelay )
 
                 "random1000x" ->
-                    ( { model | shownTooltips = { defaultTooltips | random1000x = state } }, hideWithDelay )
+                    ( { model | shownTooltips = { shownTooltips | random1000x = state } }, hideWithDelay )
 
                 _ ->
                     ( model, Cmd.none )
@@ -319,9 +324,6 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        CloseEarnL7L ->
-            ( { model | closedEarnL7lModal = True }, Ports.closeEarnL7L "" )
-
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -351,6 +353,7 @@ view { page, toMsg } model =
             { dummyAction = toMsg NoAction
             , title = page.title
             , iLink = link toMsg
+            , unsupportedNetwork = model.x2ethAddress == ""
             , activeProduct = productByTitle page.title
             , layout = classifyDevice { width = model.innerWidth, height = model.innerHeight }
             , onWalletConnect = toMsg ConnectWallet
@@ -369,8 +372,6 @@ view { page, toMsg } model =
             , mobileMenuHidden = model.mobileMenuHidden
             , shownTooltips = model.shownTooltips
             , hiddenMenus = model.hiddenMenus
-            , closedEarnL7lModal = model.closedEarnL7lModal
-            , closeEarnL7L = toMsg CloseEarnL7L
             }
         , column [ centerX, width fill, Region.mainContent ] page.body
         , Footer.view <| classifyDevice { width = model.innerWidth, height = model.innerHeight }

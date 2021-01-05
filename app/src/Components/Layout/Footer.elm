@@ -20,12 +20,16 @@ view layout =
             [ column [ width <| fillPortion 1, alignTop, spacing 10, paddingXY 30 20, Font.color Config.grayColor ]
                 [ el [ centerX, Font.color Config.blackColor ] <| text "Community"
                 , link [ centerX ]
-                    { url = "https://discord.gg/ucvmxdfM"
+                    { url = "https://discord.gg/GNevtWkqCw"
                     , label = text "Discord"
                     }
                 , link [ centerX ]
                     { url = "https://twitter.com/le7el_com"
                     , label = text "Twitter"
+                    }
+                , link [ centerX ]
+                    { url = "https://t.me/le7el_com"
+                    , label = text "Telegram"
                     }
                 ]
             , column [ width <| fillPortion 1, alignTop, spacing 10, paddingXY 30 20, Font.color Config.grayColor ]
@@ -37,6 +41,10 @@ view layout =
                 , link [ centerX ]
                     { url = "https://github.com/le7el/l7l.git"
                     , label = text "Github"
+                    }
+                , link [ centerX ]
+                    { url = "https://medium.com/@le7el"
+                    , label = text "Medium"
                     }
                 ]
             ]

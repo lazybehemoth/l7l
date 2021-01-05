@@ -1,27 +1,35 @@
 {
   "name": "le7el",
-  "description": "Simple lottery with 50% chance to ~double your stake, with rewards in own token",
+  "description": "Pioneering decentralized leverage for mainstream users",
   "version": "1.0.0",
   "keywords": [],
-  "author": "L7L DAO",
-  "license": "MIT",
+  "author": "LE7EL DAO",
+  "license": "MPL-2.0",
   "bugs": {
-    "url": "https://github.com/ashleygwilliams/my_package/issues"
+    "url": "https://github.com/le7el/l7l/issues"
   },
   "homepage": "https://le7el.com",
   "scripts": {
     "solhint": "solhint ./contracts/**/*.sol",
     "lint": "npm run solhint",
     "test": "NODE_ENV=test truffle test --stacktrace-extra --network develop",
+
     "migrate:dev": "truffle migrate --reset --network develop",
     "migrate:rinkeby": "truffle migrate --network live_rinkeby",
-    "migrate:live": "truffle migrate --network live",
+    "migrate:mainnet": "truffle migrate --network live_mainnet",
+
     "verify:alarm": "truffle run verify ResolutionAlarmChainlink --network live_rinkeby",
-    "verify:treasury": "truffle run verify Treasury --network live_rinkeby --license MIT",
-    "verify:randomness": "truffle run verify Randomness --network live_rinkeby  --license MIT",
-    "verify:lottery": "truffle run verify LotteryDoubleEth --network live_rinkeby --license MIT",
-    "verify:history": "truffle run verify LotteryDoubleEthHistory --network live_rinkeby --license MIT",
-    "verify:booty": "truffle run verify Booty@0x4bfb1134f3748571d15b1031cb43b7a9ea05c3be --debug --network live_rinkeby --license MIT"
+    "verify:treasury": "truffle run verify Treasury --network live_rinkeby --license MPL-2.0",
+    "verify:randomness": "truffle run verify Randomness --network live_rinkeby  --license MPL-2.0",
+    "verify:lottery": "truffle run verify LotteryDoubleEth --network live_rinkeby --license MPL-2.0",
+    "verify:history": "truffle run verify LotteryDoubleEthHistory --network live_rinkeby --license MPL-2.0",
+    "verify:booty": "truffle run verify Booty@ADDRESS --debug --network live_rinkeby --license MPL-2.0",
+
+    "verify:alarm:mainnet": "truffle run verify ResolutionAlarmChainlink --network live_mainnet",
+    "verify:treasury:mainnet": "truffle run verify Treasury --network live_mainnet --license MPL-2.0",
+    "verify:randomness:mainnet": "truffle run verify Randomness --network live_mainnet  --license MPL-2.0",
+    "verify:lottery:mainnet": "truffle run verify LotteryDoubleEth --network live_mainnet --license MPL-2.0",
+    "verify:history:mainnet": "truffle run verify LotteryDoubleEthHistory --network live_mainnet --license MPL-2.0"
   },
   "dependencies": {
     "@chainlink/contracts": "0.0.10",

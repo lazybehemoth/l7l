@@ -7,26 +7,30 @@ import getHistoryPort from './ports/get_history_port'
 import getBetsPort from './ports/get_bets_port'
 import resolutionPort from './ports/resolution_port'
 
+const lotteryContract = contracts.contract('lottery', currentNetwork())
+const historyContract = contracts.contract('history', currentNetwork())
+
 // Initial data passed to Elm (should match `Flags` defined in `Shared.elm`)
 // https://guide.elm-lang.org/interop/flags.html
 const flags = {
     url: location.href.replace('/#/', '/'),
-    https: location.protocol === "https",
+    https: location.protocol.startsWith('https'),
     domain: location.hostname,
     http_port: parseInt(location.port) || 443,
-    x2eth_address: contracts.contract('lottery', currentNetwork()).address,
-    x2eth_history_address: contracts.contract('history', currentNetwork()).address,
+    x2eth_address: lotteryContract ? lotteryContract.address : '',
+    x2eth_history_address: historyContract ? historyContract.address : '',
     inner_width: window.innerWidth,
-    inner_height: window.innerHeight,
-    closed_earn_l7l_modal: localStorage.getItem('closedEarnL7LModal') ? true : false
+    inner_height: window.innerHeight
 }
 
-// Start our Elm application
+// Start Elm application
 const app = Elm.Main.init({
     flags: flags,
     node: document.getElementById('elm-main')
 })
 const onboard = initOnboard(app, contracts)
+window.ONBOARD = onboard
+
 
 // Inform app of browser navigation (the BACK and FORWARD buttons)
 window.addEventListener('popstate', function () {
@@ -43,11 +47,6 @@ app.ports.pushUrl.subscribe(function(url) {
 app.ports.externalUrl.subscribe(function(url) {
     document.location.href = url;
 });
-
-// Save closed L7L earning popup state.
-app.ports.closeEarnL7L.subscribe(function(_) {
-    localStorage.setItem('closedEarnL7LModal', 'true');
-})
 
 // Copy ref link to clipboard
 const clipboard = new ClipboardJS('#ref-link-copy');

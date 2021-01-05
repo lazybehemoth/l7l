@@ -141,7 +141,7 @@ view model =
                         , el [ Font.bold ] <| text "14 L7L"
                         , text " per "
                         , el [ Font.bold ] <| text "0.1 ETH"
-                        , text " bet regardless if they win or lose"
+                        , text " bet regardless if you win or lose"
                         ]
                     , paragraph []
                         [ text "→ Additionally, you earn "
@@ -198,8 +198,6 @@ refLinkInput ({ url } as model) =
                     , padding <| responsive model.layout 5 10
                     , centerX
                     , Border.width 1
-                    , htmlAttribute <| Html.Attributes.id "ref-link"
-                    , htmlAttribute <| Html.Attributes.attribute "data-clipboard-text" <| genLink addr
                     ]
                     (text <| genLink addr)
                 , el
@@ -209,7 +207,7 @@ refLinkInput ({ url } as model) =
                     , Border.width 1
                     , pointer
                     , htmlAttribute <| Html.Attributes.id "ref-link-copy"
-                    , htmlAttribute <| Html.Attributes.attribute "data-clipboard-target" "#ref-link"
+                    , htmlAttribute <| Html.Attributes.attribute "data-clipboard-text" <| genLink addr
                     , below <|
                         el
                             [ paddingXY 0 5

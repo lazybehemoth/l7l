@@ -22,6 +22,7 @@ view :
     { dummyAction : msg
     , title : String
     , iLink : List (Attribute msg) -> String -> Element msg -> Element msg
+    , unsupportedNetwork : Bool
     , layout : Device
     , activeProduct : a
     , onWalletConnect : msg
@@ -40,29 +41,45 @@ view :
     , mobileMenuHidden : Animator.Timeline Bool
     , shownTooltips : ShownTooltips
     , hiddenMenus : HiddenMenus
-    , closedEarnL7lModal : Bool
-    , closeEarnL7L : msg
     }
     -> Element msg
-view { dummyAction, layout, onWalletConnect, onWalletDisconnect, onEthClaim, onTooltipToggle, walletAddress, myGreenBets, myBlueBets, ethBalanceForClaim, l7lBalanceForClaim, disableClaimEth, shownTooltips } =
+view { dummyAction, unsupportedNetwork, layout, onWalletConnect, onWalletDisconnect, onEthClaim, onTooltipToggle, walletAddress, myGreenBets, myBlueBets, ethBalanceForClaim, l7lBalanceForClaim, disableClaimEth, shownTooltips } =
     case walletAddress of
         Nothing ->
-            Input.button
-                [ padding 15
-                , Background.color <| Config.highlightColor
-                , Font.color <| Config.whiteColor
-                , Config.mainFont
-                ]
-                { onPress = Just onWalletConnect
-                , label = text "Connect wallet"
-                }
+            if unsupportedNetwork then
+                column
+                    [ spacingXY 0 5, centerX ]
+                    [ Input.button
+                        [ padding 15
+                        , Background.color <| Config.grayColor
+                        , Font.color <| Config.whiteColor
+                        , Config.mainFont
+                        , centerX
+                        ]
+                        { onPress = Nothing
+                        , label = text "Connect wallet"
+                        }
+                    , paragraph
+                        [ Font.italic, Font.size 15, width <| px 300, alignLeft, Font.center ]
+                        [ text "To connect, please select Rinkeby or Mainnet Ethereum networks in your wallet" ]
+                    ]
+            else
+                Input.button
+                    [ padding 15
+                    , Background.color <| Config.highlightColor
+                    , Font.color <| Config.whiteColor
+                    , Config.mainFont
+                    ]
+                    { onPress = Just onWalletConnect
+                    , label = text "Connect wallet"
+                    }
 
         Just wallet ->
             column
                 [ spacing 5
                 , Border.width 2
                 , Border.color Config.blackColor
-                , Font.size <| responsive layout 13 16
+                , Font.size <| responsive layout 13 15
                 , padding 5
                 , alignTop
                 ]
@@ -79,14 +96,14 @@ view { dummyAction, layout, onWalletConnect, onWalletDisconnect, onEthClaim, onT
                     [ paddingEach { top = 0, right = responsive layout 5 10, bottom = 5, left = responsive layout 5 10 }
                     , width fill
                     ]
-                    [ column [ width (fill |> maximum 300 |> minimum 100) ]
+                    [ column [ width (fill |> maximum 200 |> minimum ( responsive layout 100 150 ) ) ]
                         [ row [ width fill ]
                             [ column [ Font.color <| Config.grayColor ] [ text "ETH: " ]
                             , column [ paddingXY 3 0 ] [ text <| bulkEther ethBalanceForClaim ]
                             , ethClaimLink layout onEthClaim ethBalanceForClaim disableClaimEth
                             ]
                         ]
-                    , column [ width (fill |> maximum 300 |> minimum 100) ]
+                    , column [ width (fill |> maximum 200 |> minimum ( responsive layout 100 150 ) ) ]
                         [ row [ width fill ]
                             [ column [ Font.color <| Config.grayColor ] [ text "L7L: " ]
                             , column [ paddingXY 3 0 ] [ text <| readableL7l l7lBalanceForClaim ]
@@ -95,13 +112,13 @@ view { dummyAction, layout, onWalletConnect, onWalletDisconnect, onEthClaim, onT
                                 , paddingXY 3 3
                                 , Font.color <| Config.grayColor
                                 , Events.onMouseEnter <|
-                                    if layout.class == Phone then
+                                    if layout.class == Phone || layout.class == Tablet then
                                         dummyAction
 
                                     else
                                         onTooltipToggle "claimNotice" True
                                 , Events.onMouseLeave <|
-                                    if layout.class == Phone then
+                                    if layout.class == Phone || layout.class == Tablet then
                                         dummyAction
 
                                     else
