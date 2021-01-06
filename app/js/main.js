@@ -7,6 +7,10 @@ import getHistoryPort from './ports/get_history_port'
 import getBetsPort from './ports/get_bets_port'
 import resolutionPort from './ports/resolution_port'
 
+if ((location.hostname !== 'localhost' && !location.hostname.startsWith('192.168')) && location.protocol !== 'https:') {
+    location.replace(`https:${location.href.substring(location.protocol.length)}`);
+}
+
 const lotteryContract = contracts.contract('lottery', currentNetwork())
 const historyContract = contracts.contract('history', currentNetwork())
 

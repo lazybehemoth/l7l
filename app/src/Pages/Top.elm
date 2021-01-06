@@ -209,7 +209,7 @@ save model shared =
         addMyBet bet total =
             case shared.walletAddress of
                 Just wallet ->
-                    if String.toLower bet.address == wallet then
+                    if String.toLower bet.address == String.toLower wallet then
                         case String.toFloat bet.amount of
                             Just amount ->
                                 total + amount

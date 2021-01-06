@@ -1,7 +1,7 @@
 import { ethers } from 'ethers/dist/ethers-all.esm.min'
 
 let RPC_ENDPOINT = 'https://mainnet.infura.io/v3/296c495e5dbc4f95ad4bbf1e4ea0de5e'
-const INFURA_KEY = '296c495e5dbc4f95ad4bbf1e4ea0de5e'
+const INFURA_KEY = '1308e2267668432db92f19cc422a8a29'
 
 let defaultEthersProvider, defaultNetwork = 1 // Production
 
