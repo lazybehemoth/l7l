@@ -57,10 +57,31 @@ contract ResolutionAlarmCron {
     function setAlarm(uint32 _period) external {}
 
     /** 
+     * @dev Checks if game is ready for resolution.
+     */
+    function canResolve() public view returns (bool) {
+        TrustedLottery.canResolve();
+    }
+
+    /** 
      * @dev Call resolution lottery function when alarm notification comes from Chainlink.
      */
     function fulfillAlarm() external onlyAlarmNodes {
         TrustedLottery.results();
+    }
+
+    /** 
+     * @dev Checks if game is ready to continue after resolution.
+     */
+    function canContinue() public view returns (bool) {
+        TrustedLottery.canContinue();
+    }
+
+    /** 
+     * @dev Call resolution lottery function when alarm notification comes from Chainlink.
+     */
+    function continueGame() external onlyAlarmNodes {
+        TrustedLottery.continueGame();
     }
 
     /** 

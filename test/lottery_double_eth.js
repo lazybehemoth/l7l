@@ -152,6 +152,8 @@ contract('LotteryDoubleEth', accounts => {
 
     assert.equal(_casinoBalance.gte(casinoBalance), true, 'should increase casino balance by ~0.005 ETH minus gas');
 
+    await instance.continueGame.sendTransaction({ from: accounts[0] });
+
     const totalTickets = await booty.totalBlue();
     const plannedReward = totalBooty.mul(account2Bet).div(totalTickets);
     const reward = await treasury.payments.call(accounts[2]);
@@ -274,6 +276,7 @@ contract('LotteryDoubleEth', accounts => {
     await resolution_alarm.fulfillAlarm.sendTransaction({ from: accounts[9] });
     const seed = await instance.lastSeed();
     await randomness.rawFulfillRandomness.sendTransaction(seed, 10, { from: accounts[4] });
+    await resolution_alarm.continueGame.sendTransaction({ from: accounts[9] });
 
     const leftToClaim1 = await booty.unlockedBalanceOf(accounts[5]);
     assert.equal(leftToClaim1.toString(), ether('0.1485'), 'should be 0.1485');
@@ -299,6 +302,7 @@ contract('LotteryDoubleEth', accounts => {
     await instance.results.sendTransaction({ from: accounts[0] });
     const seed = await instance.lastSeed();
     await randomness.rawFulfillRandomness.sendTransaction(seed, 10, { from: accounts[4] });
+    await instance.continueGame.sendTransaction({ from: accounts[0] });
     await instance.claimBooty.sendTransaction({ from: accounts[5]});
     const balance3 = await web3.eth.getBalance(accounts[5]).then(amount => web3.utils.toBN(amount));
     assert.equal(balance3.gt(balance2), true, 'should be greater');

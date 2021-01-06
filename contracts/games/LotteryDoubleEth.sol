@@ -28,7 +28,7 @@ contract LotteryDoubleEth is GasTokenUser {
 
     // We use LOTTERY_STATE instead of Pausable abstraction
     // to save gas fees, as we need more states in lottery state machine.
-    enum LOTTERY_STATE { OPENED, PAUSED, RESOLUTION }
+    enum LOTTERY_STATE { OPENED, PAUSED, RESOLUTION, RESOLVED }
     LOTTERY_STATE public state = LOTTERY_STATE.OPENED;
 
     address internal constant ZERO_ADDRESS = address(0);
@@ -72,7 +72,8 @@ contract LotteryDoubleEth is GasTokenUser {
     }
 
     modifier notInResolution() {
-        require(state != LOTTERY_STATE.RESOLUTION, "LE7EL Random is in resolution");
+        LOTTERY_STATE _state = state;
+        require(_state != LOTTERY_STATE.RESOLUTION && _state != LOTTERY_STATE.RESOLVED, "LE7EL Random is in resolution");
         _;
     }
 
@@ -125,7 +126,7 @@ contract LotteryDoubleEth is GasTokenUser {
      * @dev Checks if game is ready for resolution by 3rd party alarm resolvers.
      */
     function canResolve() public view returns (bool) {
-        return now > endsAfter;
+        return state == LOTTERY_STATE.OPENED && now > endsAfter;
     }
 
     /** 
@@ -209,9 +210,25 @@ contract LotteryDoubleEth is GasTokenUser {
             _TrustedHistory.roundEnded(currentRound, randomness, address(TrustedBooty).balance, TrustedBooty.totalGreen());
         }
 
+        state = LOTTERY_STATE.RESOLVED;
+    }
+
+    /**
+     * @dev Checks if game is ready for a new round after successful resolution.
+     */
+    function canContinue() public view returns (bool) {
+        return state == LOTTERY_STATE.RESOLVED;
+    }
+
+    /** 
+     * @dev Continue game after the round was resolved.
+     */
+    function continueGame() public onlyResolvers {
+        require(canContinue(), "Not resolved");
+
         reset();
 
-        _TrustedHistory.roundStarted(currentRound, endsAfter);
+        TrustedHistory.roundStarted(currentRound, endsAfter);
     }
 
     /**
@@ -414,10 +431,12 @@ contract LotteryDoubleEth is GasTokenUser {
      * @dev Manual lottery reset in case it stuck, refund players if there are bets.
      * In case resolution has stucked, it's possible to hard reset in 300 blocks (~60-80 minutes)
      *
+     * Use continueGame is it was resolved.
+     *
      * @param _lotteryPeriod Minutes until lottery resolution.
      */
     function daoReset(uint32 _lotteryPeriod) external onlyManagement {
-        require(state != LOTTERY_STATE.RESOLUTION || block.number > maxBlockToResolve, "Wait 300 blocks to refund");
+        require(state != LOTTERY_STATE.RESOLVED || block.number > maxBlockToResolve, "Wait 300 blocks to refund");
 
         TrustedBooties[currentRound].declareDraw();
         LotteryHistoryInterface _TrustedHistory = TrustedHistory;
@@ -518,17 +537,9 @@ contract LotteryDoubleEth is GasTokenUser {
     }
 
     /** 
-     * @dev Wrapper for recycling with gas credit generation.
-     */
-    function daoRecycleBooty(uint32 round) external onlyManagement {
-        createBooty(); // Generates gas credit which will be refunded in a recycle call.
-        daoRecycleBootyNoCredit(round);
-    }
-
-    /** 
      * @dev All payouts should be cleared before contract can be recycled.
      */
-    function daoRecycleBootyNoCredit(uint32 round) public onlyManagement {
+    function daoRecycleBooty(uint32 round) external onlyManagement {
         BootyInterface TrustedBooty = TrustedBooties[round];
         TrustedBooty.forceRecycle();
         TrustedAvailableBooties.push(TrustedBooty);

@@ -22,8 +22,8 @@ import { L7lLedgerInterface } from "./interfaces/L7lLedgerInterface.sol";
 contract Treasury {
     using SafeMath for uint256;
 
-    bytes32 public constant NO_SHARES = keccak256("account has no shares");
-    bytes32 public constant NO_PAYMENT = keccak256("account is not due payment");
+    bytes32 public constant NO_SHARES = keccak256(abi.encode("account has no shares"));
+    bytes32 public constant NO_PAYMENT = keccak256(abi.encode("account is not due payment"));
 
     GovernanceInterface public immutable TrustedGovernance;
     L7lLedgerInterface public TrustedL7lLedger;
@@ -64,7 +64,7 @@ contract Treasury {
     event EthClaimFailure(
         address indexed player,
         address booty,
-        bytes error
+        string error
     );
 
     /** 
@@ -133,24 +133,25 @@ contract Treasury {
         BootyInterface[] storage booties = TrustedBooties[destAddr]; 
 
         uint256 i = booties.length;
-        bool cleanupAllowed = true;
         require(i > 0, "nothing to withdraw");
+
+        bool cleanupAllowed = true;
 
         while (i > 0 && gasleft() > 70000) {
             BootyInterface booty = booties[i - 1];
             address bootyAddr = address(booty);
 
-            // solhint-disable-next-line avoid-low-level-calls
-            (bool success, bytes memory error) = bootyAddr.call(abi.encodeWithSelector(booty.release.selector, dest));
-            if (!success) {
+            try booty.release(dest) {
+                if (cleanupAllowed) booties.pop();
+            } catch Error(string memory error) {
+                bytes32 hashedError = keccak256(abi.encode(error));
                 emit EthClaimFailure(destAddr, bootyAddr, error);
-            }
 
-            bytes32 hashedError = keccak256(error);
-            if (cleanupAllowed && (success || hashedError == NO_SHARES || hashedError == NO_PAYMENT)) {
-                booties.pop();
-            } else {
-                cleanupAllowed = false;
+                if (cleanupAllowed && (hashedError == NO_SHARES || hashedError == NO_PAYMENT)) {
+                    booties.pop();
+                } else {
+                    cleanupAllowed = false;
+                }
             }
 
             i--;

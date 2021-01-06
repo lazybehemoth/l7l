@@ -42,13 +42,15 @@ module.exports = async (deployer, network, [defaultAccount, _a1, _a2, _a3, oracl
       console.error(err)
     }
   } else if (network == 'live_rinkeby') {
-    await deployer.deploy(
-      Randomness,
-      governanceContract.address,
-      '0xb3dCcb4Cf7a26f6cf6B120Cf5A73875B7BBc655B',
-      '0x01BE23585060835E02B77ef475b0Cc51aA1e0709',
-      '0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311'
-    )
+    randomnessContract = 
+      await deployer.deploy(
+        Randomness,
+        governanceContract.address,
+        '0xb3dCcb4Cf7a26f6cf6B120Cf5A73875B7BBc655B',
+        '0x01BE23585060835E02B77ef475b0Cc51aA1e0709',
+        '0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311'
+      )
+    await randomnessContract.daoOracleFee('100000000000000000', { from: defaultAccount });
 
     /*await deployer.deploy(
       ResolutionAlarmChainlink,

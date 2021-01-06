@@ -12,7 +12,7 @@ contract Randomness is VRFConsumerBase {
 
     address public immutable vrfCoordinator;
     bytes32 internal immutable keyHash;
-    uint128 internal linkFee = 0.1 * 10 ** 18; // 0.1 LINK
+    uint128 internal linkFee = 2000000000000000000; // 2 LINK
 
     struct Request {
         address g;          // Lottery
