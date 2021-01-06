@@ -99,6 +99,7 @@ type alias Outcome =
 
 type Msg
     = ChoseBetType BetType
+    | ConnectWallet
     | CurrentColor Element.Color Element.Color
     | ChangeBetAmount String
     | FinaliseBetAmount
@@ -159,7 +160,7 @@ init shared url =
       , ethWalletBalance = shared.ethWalletBalance
       , betStatus = NoBet
       , currentRound = 1
-      , roundEndsIn = 0
+      , roundEndsIn = -100000
       , resultsHistoryPage = 1
       , resultsHistory = []
       , outcomes = []
@@ -273,6 +274,9 @@ update msg model =
 
             else
                 ( { model | betType = Blue }, Cmd.none )
+
+        ConnectWallet ->
+            ( model, Ports.connectWallet "" )
 
         CurrentColor color1 color2 ->
             ( { model | currentColor = color1 }, Process.sleep 3000 |> Task.perform (always (CurrentColor color2 color1)) )
@@ -490,6 +494,12 @@ view model =
 introBlock : Model -> List (Element Msg)
 introBlock model =
     let
+        lead =
+            if model.roundEndsIn == -100000 then
+                el [ pointer, onClick ConnectWallet ] ( text <| Utils.readableSeconds model.roundEndsIn )
+            else
+                text <| Utils.readableSeconds model.roundEndsIn
+
         defaultBlock =
             [ row [ width fill ]
                 [ el [ centerX, Config.h1FontSize, Font.color Config.blueColor, Config.mainFont ] <|
@@ -509,7 +519,7 @@ introBlock model =
                 ]
             , row [ width fill, Font.size 28, Font.semiBold, Font.underline, paddingXY 0 10 ] <|
                 [ column [ centerX ]
-                    [ text <| Utils.readableSeconds model.roundEndsIn
+                    [ lead
                     ]
                 ]
             , row [ width fill, Font.size 12, Font.color Config.grayColor, hidden <| model.roundEndsIn <= 0 ] <|
@@ -619,6 +629,19 @@ betsWarning model =
 
 betsBlock : Model -> List (Element Msg)
 betsBlock model =
+    let
+        connectWarning =
+            if model.walletAddress == Nothing && model.blueBets == [] && model.greenBets == [] then
+                el
+                    [ centerX
+                    , padding 15
+                    , pointer
+                    , Font.underline
+                    , onClick ConnectWallet
+                    ] <| text "Connect to see the bets"
+            else
+                none
+    in
     [ row [ centerX, responsiveColumn model.layout, spacing 40, paddingEach { edges | bottom = 40 }, Font.size <| responsive model.layout 10 14 ]
         [ column [ alignTop, width <| fillPortion 1, paddingEach { edges | left = 10 } ]
             [ el [ centerX, Font.size 20, Font.color Config.blueColor, paddingXY 0 10 ] <| text "Blue"
@@ -630,7 +653,7 @@ betsBlock model =
                         , String.fromInt <| percentShare model.totalBlueBooty model.totalGreenBooty
                         , "%)"
                         ]
-            , el [ width fill ] <| totalBets model.blueBets
+            , el [ width fill, Element.inFront connectWarning ] <| totalBets model.blueBets
             ]
         , column [ alignTop, width <| fillPortion 1, paddingEach { edges | right = 10 } ]
             [ el [ centerX, Font.size 20, Font.color Config.greenColor, paddingXY 0 10 ] <| text "Green"
@@ -642,7 +665,7 @@ betsBlock model =
                         , String.fromInt <| percentShare model.totalGreenBooty model.totalBlueBooty
                         , "%)"
                         ]
-            , el [ width fill ] <| totalBets model.greenBets
+            , el [ width fill, Element.inFront connectWarning ] <| totalBets model.greenBets
             ]
         ]
     ]

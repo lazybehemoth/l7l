@@ -80,7 +80,7 @@ module.exports = {
       }),
       network_id: 1,       // Mainnet's id
       from: '0xA00A92cf63e5675191D33093F0cf8C0Fc4d337e9',
-      gasPrice: 60000000000,  // 60 gwei (in wei) (default: 100 gwei)
+      gasPrice: 80000000000,  // 80 gwei (in wei) (default: 100 gwei)
       //gas: 5500000,        // Ropsten has a lower block limit than mainnet
       confirmations: 0,    // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)

@@ -8,6 +8,8 @@ build
 public/dist
 logs/*
 RINKEBY.md
+MAINNET.md
 l7l.code-workspace
 deb.js
 results.js
+cron

@@ -126,6 +126,10 @@ module.exports = async function(callback) {
         })
         .then((result) => {
             console.log('Randomness', result)
+
+            return l.continueGame.sendTransaction({ from: provider.getAddress(0) })
+        })
+        .then(() => {
             callback(true)
         })
         .catch(callback)

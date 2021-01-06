@@ -82,7 +82,10 @@ shortWallet left walletAddress =
 
 readableSeconds : Int -> String
 readableSeconds secs =
-    if secs < 30 then
+    if secs == -100000 then
+        "Connect to see countdown"
+
+    else if secs < 30 then
         "asking Chainlink Oracle..."
 
     else if secs < 60 then

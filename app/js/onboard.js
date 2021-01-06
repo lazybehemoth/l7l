@@ -129,7 +129,7 @@ const initOnboard = (app, contracts) => {
         { walletName: "operaTouch" },
         { walletName: "torus" },
         { walletName: "unilogin" },
-        { walletName: "walletLink", rpcUrl: RPC_ENDPOINT, appName: 'link.casino' },
+        { walletName: "walletLink", rpcUrl: RPC_ENDPOINT, appName: 'le7el' },
         { walletName: "imToken", rpcUrl: RPC_ENDPOINT },
         { walletName: "meetone" },
         { walletName: "mykey", rpcUrl: RPC_ENDPOINT },
