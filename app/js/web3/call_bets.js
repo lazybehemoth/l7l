@@ -59,8 +59,8 @@ export default async (appNetworkId, { contract, contractPromise }, notifyGreenBe
     const greenBetsFilter = currentBootyContract.filters.Bet(null, null, 1, currentRound)
     const blueBetsFilter = currentBootyContract.filters.Bet(null, null, 0, currentRound)
     const currentBlock = await currentBootyContract.provider.getBlockNumber()
-    const allGreenBets = currentBootyContract.queryFilter(greenBetsFilter, currentBlock - 6600, currentBlock)
-    const allBlueBets = currentBootyContract.queryFilter(blueBetsFilter, currentBlock - 6600, currentBlock)
+    const allGreenBets = currentBootyContract.queryFilter(greenBetsFilter, currentBlock - (6600 * 30), currentBlock)
+    const allBlueBets = currentBootyContract.queryFilter(blueBetsFilter, currentBlock - (6600 * 30), currentBlock)
 
     return Promise.all([
         currentBootyContract.totalGreen(),
