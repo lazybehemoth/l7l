@@ -16,7 +16,7 @@ import Json.Decode exposing (Decoder, bool, decodeValue, field, int, list, map2,
 import Json.Encode
 import Ports
 import Process
-import Shared
+import Shared exposing (Bet, RoundResult)
 import Spa.Document exposing (Document)
 import Spa.Page as Page exposing (Page)
 import Spa.Url exposing (Url)
@@ -66,23 +66,6 @@ type alias Model =
     , resultsHistory : List RoundResult
     , outcomes : List Outcome
     , currentChainlinkSlide : Int
-    }
-
-
-type alias Bet =
-    { address : String
-    , amount : String
-    }
-
-
-type alias RoundResult =
-    { round : Int
-    , transactionHash : String
-    , result : String
-    , totalBooty : String
-    , totalWinners : String
-    , myBetSide : Maybe String
-    , myBetAmount : Maybe String
     }
 
 
@@ -148,21 +131,21 @@ init shared url =
       , walletAddress = shared.walletAddress
       , betType = Green
       , betTypeLabel = ""
-      , l7lRewardCof = 100.0
-      , pendingL7lReward = 0
+      , l7lRewardCof = shared.l7lRewardCof
+      , pendingL7lReward = shared.pendingL7lReward
       , currentColor = Config.blueColor
       , rawAmount = String.fromFloat <| Utils.weiToEther shared.ethWalletBalance
       , amount = Utils.weiToEther shared.ethWalletBalance
-      , greenBets = []
-      , blueBets = []
-      , totalGreenBooty = 0
-      , totalBlueBooty = 0
+      , greenBets = shared.greenBets
+      , blueBets = shared.blueBets
+      , totalGreenBooty = shared.totalGreenBooty
+      , totalBlueBooty = shared.totalBlueBooty
       , ethWalletBalance = shared.ethWalletBalance
       , betStatus = NoBet
-      , currentRound = 1
-      , roundEndsIn = -100000
-      , resultsHistoryPage = 1
-      , resultsHistory = []
+      , currentRound = shared.currentRound
+      , roundEndsIn = shared.roundEndsIn
+      , resultsHistoryPage = shared.resultsHistoryPage
+      , resultsHistory = shared.resultsHistory
       , outcomes = []
       , currentChainlinkSlide = 1
       }
@@ -181,21 +164,21 @@ load shared model =
       , walletAddress = shared.walletAddress
       , betType = model.betType
       , betTypeLabel = ""
-      , l7lRewardCof = model.l7lRewardCof
-      , pendingL7lReward = model.pendingL7lReward
+      , l7lRewardCof = shared.l7lRewardCof
+      , pendingL7lReward = shared.pendingL7lReward
       , currentColor = model.currentColor
       , rawAmount = String.fromFloat <| Utils.weiToEther shared.ethWalletBalance
       , amount = Utils.weiToEther shared.ethWalletBalance
-      , greenBets = model.greenBets
-      , blueBets = model.blueBets
-      , totalGreenBooty = model.totalGreenBooty
-      , totalBlueBooty = model.totalBlueBooty
+      , greenBets = shared.greenBets
+      , blueBets = shared.blueBets
+      , totalGreenBooty = shared.totalGreenBooty
+      , totalBlueBooty = shared.totalBlueBooty
       , ethWalletBalance = shared.ethWalletBalance
       , betStatus = model.betStatus
-      , currentRound = model.currentRound
-      , roundEndsIn = model.roundEndsIn
-      , resultsHistoryPage = model.resultsHistoryPage
-      , resultsHistory = model.resultsHistory
+      , currentRound = shared.currentRound
+      , roundEndsIn = shared.roundEndsIn
+      , resultsHistoryPage = shared.resultsHistoryPage
+      , resultsHistory = shared.resultsHistory
       , outcomes = model.outcomes
       , currentChainlinkSlide = model.currentChainlinkSlide
       }
@@ -223,7 +206,20 @@ save model shared =
                 Nothing ->
                     total
     in
-    { shared | myGreenBets = List.foldl addMyBet 0 model.greenBets, myBlueBets = List.foldl addMyBet 0 model.blueBets }
+    { shared 
+        | myGreenBets = List.foldl addMyBet 0 model.greenBets
+        , myBlueBets = List.foldl addMyBet 0 model.blueBets
+        , roundEndsIn = model.roundEndsIn
+        , greenBets = model.greenBets
+        , blueBets = model.blueBets
+        , totalGreenBooty = model.totalGreenBooty
+        , totalBlueBooty = model.totalBlueBooty
+        , resultsHistoryPage = model.resultsHistoryPage
+        , resultsHistory = model.resultsHistory
+        , currentRound = model.currentRound
+        , l7lRewardCof = model.l7lRewardCof
+        , pendingL7lReward = model.pendingL7lReward
+    }
 
 
 subscriptions : Model -> Sub Msg
@@ -392,7 +388,10 @@ update msg model =
             ( { model | roundEndsIn = secs }, Process.sleep 10000 |> Task.perform (always UpdateCountdown) )
 
         UpdateCountdown ->
-            ( { model | roundEndsIn = model.roundEndsIn - 10 }, Process.sleep 10000 |> Task.perform (always UpdateCountdown) )
+            if model.roundEndsIn > 0 then
+                ( { model | roundEndsIn = model.roundEndsIn - 10 }, Process.sleep 10000 |> Task.perform (always UpdateCountdown) )
+            else
+                ( model, Cmd.none )
 
         LoadHistoryPage historyPage ->
             ( { model | resultsHistoryPage = historyPage }, Ports.resultsHistoryPage historyPage )
@@ -847,7 +846,7 @@ resultsHistory model =
                             "win"
 
                     _ ->
-                        "no bet"
+                        ""
 
         mySaldo { myBetAmount } winColor =
             if winColor == Config.grayColor then

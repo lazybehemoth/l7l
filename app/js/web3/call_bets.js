@@ -42,6 +42,19 @@ export default async (appNetworkId, { contract, contractPromise }, notifyGreenBe
         }
     })
 
+    // No bets are possible in this gap
+    if (await lotteryContract.canContinue()) {
+        notifyBlueBets('0', [])
+        notifyGreenBets('0', [])
+
+        return Promise.all([
+            Promise.resolve('0'),
+            Promise.resolve('0'),
+            Promise.resolve([]),
+            Promise.resolve([])
+        ])
+    }
+
     const address = currentAddress()
     const greenBetsFilter = currentBootyContract.filters.Bet(null, null, 1, currentRound)
     const blueBetsFilter = currentBootyContract.filters.Bet(null, null, 0, currentRound)

@@ -85,7 +85,10 @@ readableSeconds secs =
     if secs == -100000 then
         "Connect to see countdown"
 
-    else if secs < 30 then
+    else if secs == -50000 then
+        "Bet to launch 24h countdown"
+
+    else if secs < 0 then
         "asking Chainlink Oracle..."
 
     else if secs < 60 then

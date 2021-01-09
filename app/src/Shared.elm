@@ -1,7 +1,7 @@
 module Shared exposing
     ( Flags
     , Model
-    , Msg(..)
+    , Msg(..), RoundResult, Bet
     , init
     , link
     , maskWallet
@@ -55,6 +55,22 @@ type ClaimState
     | CompletedClaim
     | FailedClaim
 
+type alias Bet =
+    { address : String
+    , amount : String
+    }
+
+
+type alias RoundResult =
+    { round : Int
+    , transactionHash : String
+    , result : String
+    , totalBooty : String
+    , totalWinners : String
+    , myBetSide : Maybe String
+    , myBetAmount : Maybe String
+    }
+
 
 type alias Model =
     { url : Url
@@ -74,6 +90,16 @@ type alias Model =
     , mobileMenuHidden : Animator.Timeline Bool
     , shownTooltips : ShownTooltips
     , hiddenMenus : HiddenMenus
+    , roundEndsIn : Int
+    , greenBets : List Bet
+    , blueBets : List Bet
+    , totalGreenBooty : Float
+    , totalBlueBooty : Float
+    , resultsHistoryPage : Int
+    , resultsHistory : List RoundResult
+    , currentRound : Int
+    , l7lRewardCof : Float
+    , pendingL7lReward : Float
     }
 
 
@@ -118,6 +144,16 @@ init flags url =
         (Animator.init True)
         defaultTooltips
         defaultMenus
+        -100000
+        []
+        []
+        0.0
+        0.0
+        1
+        []
+        1
+        100.0
+        0.0
     , Cmd.none
     )
 

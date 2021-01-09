@@ -1,18 +1,18 @@
 import callHistoryPerPage from '../web3/call_history_per_page'
 import callBets from '../web3/call_bets'
+import callRoundEndsIn from '../web3/call_round_ends_in'
 
 export default (app, appNetworkId, contracts) => {
-    const lotteryContract = contracts.contract('lottery', appNetworkId)
     const lotteryHistoryContract = contracts.contract('history', appNetworkId)
    
     lotteryHistoryContract.on("RoundStarted", (round, endsAfter, event) => {
         console.log("RoundStarted", event)
 
-        const now = new Date()  
-        const secondsSinceEpoch = Math.round(now.getTime() / 1000)
+        //const now = new Date()  
+        //const secondsSinceEpoch = Math.round(now.getTime() / 1000)
 
         app.ports.currentRound.send(round)
-        app.ports.roundEndsIn.send(endsAfter.toNumber() - secondsSinceEpoch)
+        app.ports.roundEndsIn.send(-50000 /*endsAfter.toNumber() - secondsSinceEpoch*/)
         app.ports.greenBets.send([])
         app.ports.blueBets.send([])
         app.ports.totalBlueBooty.send('0')
@@ -32,20 +32,14 @@ export default (app, appNetworkId, contracts) => {
         )
     });
 
-    
     lotteryHistoryContract.on("RoundEnded", (round, randomness, totalBooty, totalWinners, event) => {
         console.log("RoundEnded", round, randomness, totalBooty, totalWinners, event)
 
-        callHistoryPerPage(appNetworkId, 1, contracts)
+        callHistoryPerPage(appNetworkId, 1, contracts, true)
             .then(app.ports.resultsHistory.send)
             .catch(console.error)
     })
 
-    lotteryContract.endsAfter()
-        .then(endsAfter => {
-            const now = new Date()  
-            const secondsSinceEpoch = Math.round(now.getTime() / 1000)
-            app.ports.roundEndsIn.send(endsAfter.toNumber() - secondsSinceEpoch)
-        })
+    callRoundEndsIn(appNetworkId, contracts, app.ports.roundEndsIn.send)
         .catch(console.error)
 }

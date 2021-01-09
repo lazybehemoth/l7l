@@ -13,7 +13,7 @@ export default (appNetworkId, { contract }, updateClaim, notifyConfimations) => 
         console.log(destAddr, i)
     })
 
-    return lotteryContractSigner.claimBooty({ gasLimit: 500000 })
+    return lotteryContractSigner.claimBooty({ gasLimit: 150000 })
         .then(result => {
             notifyConfimations(result.confirmations)
             return Promise.resolve(result.hash)

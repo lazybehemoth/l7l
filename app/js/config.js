@@ -16,7 +16,7 @@ if (document.location.hostname === 'localhost' || document.location.hostname.sta
   defaultEthersProvider = new ethers.providers.JsonRpcProvider(`http://${document.location.hostname}:8545`)
   RPC_ENDPOINT = `http://${host}:8545`
 } else {
-  defaultEthersProvider = ethers.getDefaultProvider(defaultNetwork)
+  defaultEthersProvider = new ethers.providers.JsonRpcProvider(`https://mainnet.infura.io/v3/b01b984903cf4be0b82fe4fffc2e0eb3`) //ethers.getDefaultProvider(defaultNetwork)
 }
 
 if (!localStorage.getItem('referrer')) {

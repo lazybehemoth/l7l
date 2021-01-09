@@ -42,7 +42,8 @@ function uniqByKeepLast(a, key) {
     ]
 }
 
-export default (appNetworkId, page, { contract }) => {
+// Increment is used when current round is completed and new is not started
+export default (appNetworkId, page, { contract }, inc) => {
     const perPage = window.innerWidth <= 600 ? 3 : 6
     const from = (page - 1) * perPage + 1
     const to = from + perPage - 1
@@ -54,11 +55,13 @@ export default (appNetworkId, page, { contract }) => {
     const address = currentAddress()
 
     return Promise.all([
+        lotteryContract.canContinue(),
         lotteryContract.currentRound(),
         lotteryContract.provider.getBlockNumber(),
         getBlockRange(address || DEFAULT_ADDRESS)
     ])
-        .then(([currentRound, currentBlock, [cachedFromBlock, cachedToBlock]]) => {
+        .then(([canContinue, currentRound, currentBlock, [cachedFromBlock, cachedToBlock]]) => {
+            currentRound = inc || canContinue ? currentRound + 1 : currentRound
             from_ = (currentRound - to) > 0 ? currentRound - to : 0
             to_ = currentRound - from
 
@@ -74,13 +77,14 @@ export default (appNetworkId, page, { contract }) => {
                 'cacheFrom', cachedFromBlock,
                 'cacheTo', cachedToBlock,
                 'from', fromBlock,
-                'to', toBlock
+                'to', toBlock,
             )
 
             // Keep mind that single Market Maker recycled rounds doesn't generate NewBet events,
             // so that MM address has wrong stats in history (no bet), despite it's participation
             // and possible winning / losses.
             return getEventsForPage(address || DEFAULT_ADDRESS, currentRound, page, perPage)
+                .catch(console.error)
                 .then(cachedEvents => {
                     let resolveEvents, myBetsEvents
                     if (queryNew) {
